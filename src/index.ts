@@ -1,7 +1,7 @@
 import {registerCommand, runCommand } from "./commands/commands";
 import { handlerLogin } from "./commands/users";
 
-function main() {
+async function main() {
   const registry = {};
   registerCommand(registry, "login", handlerLogin);
   if (process.argv.length === 2) {
@@ -18,7 +18,7 @@ function main() {
     return;
   }
   try {
-    runCommand(registry, command, ...commandArgs);
+    await runCommand(registry, command, ...commandArgs);
   } catch (err) {
     if (err instanceof Error) {
       console.error(`Error running command ${command}: ${err.message}`);
@@ -27,6 +27,8 @@ function main() {
     }
      process.exit(1);
   }
+
+  process.exit(0);
 }
 
 main();

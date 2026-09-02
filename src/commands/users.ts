@@ -1,5 +1,5 @@
 import { setUser } from "../config";
-export function handlerLogin(cmdName: string, ...args: string[]): void {
+export async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
   if (args.length === 0) {
     throw new Error("No username provided");
   }

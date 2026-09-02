@@ -1,5 +1,5 @@
 
-type CommandHandler = (cmdName: string, ...args: string[]) => void;
+type CommandHandler = (cmdName: string, ...args: string[]) => Promise<void>;
 
 type CommandsRegistry = Record<string, CommandHandler>;
 
@@ -10,7 +10,7 @@ export function registerCommand(registry: CommandsRegistry, cmdName: string, han
   registry[cmdName] = handler;
 }
 
-export function runCommand(registry: CommandsRegistry, cmdName: string, ...args: string[]) {
+export async function runCommand(registry: CommandsRegistry, cmdName: string, ...args: string[]): Promise<void> {
 
   if (!cmdName.trim() || !registry) {
     throw new Error("Invalid command name or registry");
