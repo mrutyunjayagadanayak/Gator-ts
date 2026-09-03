@@ -1,9 +1,11 @@
 import {registerCommand, runCommand } from "./commands/commands";
+import { handlerRegister } from "./commands/register";
 import { handlerLogin } from "./commands/users";
 
 async function main() {
   const registry = {};
   registerCommand(registry, "login", handlerLogin);
+  registerCommand(registry, "register", handlerRegister);
   if (process.argv.length === 2) {
     console.error("Please provide a command");
     process.exit(1);
