@@ -22,6 +22,6 @@ export async function runCommand(registry: CommandsRegistry, cmdName: string, ..
     throw new Error("Invalid command provided");
   }
 
-  handler(cmdName, ...args);
+  await handler(cmdName, ...args);
 
 }
