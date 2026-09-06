@@ -16,26 +16,65 @@ export type RSSFeed = {
   };
 };
 
-export async function fetchFeed(feedURL: string): Promise<void> {
-  try {
-    const receivedData = await fetch(feedURL, {
-      method: "GET",
-      headers: {
-        'User-Agent': 'gator'
-      }
-    });
-    if (!receivedData.ok) {
-      throw new Error("Unable to receive data");
-    }
-    const data = await receivedData.text();
-    const parser = new XMLParser();
-    const xmlData: RSSFeed = parser.parse(data).rss;
-    console.log(xmlData.channel.description);
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Failed to fetch the feed: ${error.message}`);
-    } else {
-      throw new Error("An unexpected error occured.");
-    }
+export async function fetchFeed(feedURL: string): Promise<RSSFeed> {
+  const res = await fetch(feedURL, {
+    headers: {
+      "User-Agent": "gator",
+      accept: "application/rss+xml",
+    },
+  });
+  if (!res.ok) {
+    throw new Error(`failed to fetch feed: ${res.status} ${res.statusText}`);
   }
+
+  const xml = await res.text();
+  const parser = new XMLParser({
+    processEntities: false,
+  });
+  let result = parser.parse(xml);
+
+  const channel = result.rss?.channel;
+  if (!channel) {
+    throw new Error("failed to parse channel");
+  }
+
+  if (
+    !channel ||
+    !channel.title ||
+    !channel.link ||
+    !channel.description ||
+    !channel.item
+  ) {
+    throw new Error("failed to parse channel");
+  }
+
+  const items: any[] = Array.isArray(channel.item)
+    ? channel.item
+    : [channel.item];
+
+  const rssItems: RSSItem[] = [];
+
+  for (const item of items) {
+    if (!item.title || !item.link || !item.description || !item.pubDate) {
+      continue;
+    }
+
+    rssItems.push({
+      title: item.title,
+      link: item.link,
+      description: item.description,
+      pubDate: item.pubDate,
+    });
+  }
+
+  const rss: RSSFeed = {
+    channel: {
+      title: channel.title,
+      link: channel.link,
+      description: channel.description,
+      item: rssItems,
+    },
+  };
+
+  return rss;
 }
