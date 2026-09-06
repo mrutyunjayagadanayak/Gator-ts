@@ -8,6 +8,13 @@
       "when": 1788312786402,
       "tag": "0000_stiff_tyger_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788670352651,
+      "tag": "0001_curious_fat_cobra",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,7 @@ import os from "os";
 
 export default defineConfig({
   schema: "src/db",
-  out: "src/db",
+  out: "src/db/migration",
   dialect: "postgresql",
   dbCredentials: {
     url: getDbUrl(),
