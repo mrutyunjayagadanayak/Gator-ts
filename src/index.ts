@@ -1,5 +1,5 @@
 import { handlerAddFeed, handlerAGG, handlerFeeds } from "./commands/agg";
-import {registerCommand, runCommand } from "./commands/commands";
+import { registerCommand, runCommand } from "./commands/commands";
 import { handlerRegister } from "./commands/register";
 import { handlerReset } from "./commands/reset";
 import { handlerLogin, handleUsers } from "./commands/users";
