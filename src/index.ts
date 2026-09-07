@@ -1,4 +1,4 @@
-import { handlerAGG } from "./commands/agg";
+import { handlerAddFeed, handlerAGG, handlerFeeds } from "./commands/agg";
 import {registerCommand, runCommand } from "./commands/commands";
 import { handlerRegister } from "./commands/register";
 import { handlerReset } from "./commands/reset";
@@ -11,6 +11,8 @@ async function main() {
   registerCommand(registry, "reset", handlerReset);
   registerCommand(registry, "users", handleUsers);
   registerCommand(registry, "agg", handlerAGG);
+  registerCommand(registry, "addfeed", handlerAddFeed);
+  registerCommand(registry, "feeds", handlerFeeds);
   if (process.argv.length === 2) {
     console.error("Please provide a command");
     process.exit(1);
