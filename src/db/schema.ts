@@ -40,3 +40,7 @@ export const feedFollows = pgTable("feed_follows", {
 }, (table) => [
   unique("user_feed").on(table.userId, table.feedId)
 ])
+
+export type Feed = typeof feeds.$inferSelect;
+export type FeedFollow = typeof feedFollows.$inferSelect;
+export type User = typeof users.$inferSelect;
