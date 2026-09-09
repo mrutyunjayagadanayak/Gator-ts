@@ -23,5 +23,4 @@ export async function runCommand(registry: CommandsRegistry, cmdName: string, ..
   }
 
   await handler(cmdName, ...args);
-
 }
