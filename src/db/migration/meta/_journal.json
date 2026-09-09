@@ -15,6 +15,13 @@
       "when": 1788744318892,
       "tag": "0001_remarkable_ozymandias",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788924413936,
+      "tag": "0002_awesome_turbo",
+      "breakpoints": true
     }
   ]
 }
