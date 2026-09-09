@@ -1,5 +1,5 @@
 import { readConfig } from "../config";
-import { createFeedFollow, getFeedFollowsByUser } from "../db/queries/feedFollows";
+import { createFeedFollow, deleteFeedFollows, getFeedFollowsByUser } from "../db/queries/feedFollows";
 import { getFeedByURL } from "../db/queries/feeds";
 import { getUserByName } from "../db/queries/users";
 import { User } from "../db/schema";
@@ -31,4 +31,25 @@ export async function handleFollow(cmdName: string,user: User, ...args: string[]
   }
   console.log(`Feed Name: ${result.feedName}`);
   console.log(`User Name: ${result.userName}`);
+}
+
+export async function handleUnfollow(cmdName: string, user: User, ...args: string[]): Promise<void> {
+  if (args.length === 0) {
+    throw new Error("No URL provided");
+  }
+
+  const [feed] = await getFeedByURL(args[0]);
+
+  if (!feed) {
+    throw new Error("No feed found");
+  }
+  const [result] = await deleteFeedFollows(user, feed);
+
+  if (!result) {
+    console.log("Nothing to delete");
+    return;
+  }
+
+  console.log(`Feed ${feed.name} deleted for ${user.name}`);
+
 }

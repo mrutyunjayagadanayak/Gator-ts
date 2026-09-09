@@ -1,6 +1,6 @@
 import { handlerAddFeed, handlerAGG, handlerFeeds } from "./commands/feeds";
 import { CommandsRegistry, registerCommand, runCommand } from "./commands/commands";
-import { handleFollow, handleFollowing } from "./commands/feed-following";
+import { handleFollow, handleFollowing, handleUnfollow } from "./commands/feed-following";
 import { handlerRegister } from "./commands/register";
 import { handlerReset } from "./commands/reset";
 import { handlerLogin, handleUsers } from "./commands/users";
@@ -17,7 +17,7 @@ async function main() {
   registerCommand(registry, "feeds", handlerFeeds);
   registerCommand(registry, "follow", middlewareLoggedIn(handleFollow));
   registerCommand(registry, "following", middlewareLoggedIn(handleFollowing));
-
+  registerCommand(registry, "unfollow", middlewareLoggedIn(handleUnfollow));
   if (process.argv.length === 2) {
     console.error("Please provide a command");
     process.exit(1);
