@@ -12,7 +12,7 @@ export async function getUserByName(name: string) {
   return result;
 }
 
-export async function resetUsers() {
+export async function resetUsers():Promise<void> {
   await db.delete(users);
 }
 

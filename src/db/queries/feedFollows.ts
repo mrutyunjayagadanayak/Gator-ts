@@ -65,7 +65,7 @@ export async function getFeedFollowsByUser(user: string) {
   return result;
 }
 
-export async function resetFeedFollows() {
+export async function resetFeedFollows():Promise<void> {
   db.delete(feedFollows);
 }
 

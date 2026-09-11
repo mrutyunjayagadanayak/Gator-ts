@@ -11,7 +11,7 @@ export async function createFeed(name: string, url: string, user: string) {
   return result;
 }
 
-export async function resetFeeds() {
+export async function resetFeeds(): Promise<void> {
   await db.delete(feeds);
 }
 

@@ -1,9 +1,11 @@
-import { readConfig } from "../config";
+
 import { createFeedFollow } from "../db/queries/feedFollows";
 import { createFeed, getFeeds } from "../db/queries/feeds";
-import { getUserById, getUserByName } from "../db/queries/users";
+import { getUserById } from "../db/queries/users";
 import { Feed, User } from "../db/schema";
-import { fetchFeed } from "../rss/feedData";
+import { fetchFeed, getNextFeedToFetch, markFeedFetched } from "../rss/feedData";
+import { parseDuration } from "./time";
+
 
 
 async function printFeed(feed: Feed): Promise<void> {
@@ -17,10 +19,64 @@ async function printFeed(feed: Feed): Promise<void> {
   console.log(`User name: ${feedUser.name}`);
 }
 
-export async function handlerAGG(cmdName: string, ...args: string[]): Promise<void> {
-  const url = "https://www.wagslane.dev/index.xml";
-  const data = await fetchFeed(url);
-  console.log(JSON.stringify(data));
+export async function handlerAgg(cmdName: string, ...args: string[]) {
+  if (args.length !== 1) {
+    throw new Error(`usage: ${cmdName} <time_between_reqs>`);
+  }
+
+  const timeArg = args[0];
+  const timeBetweenRequests = parseDuration(timeArg);
+  if (!timeBetweenRequests) {
+    throw new Error(
+      `invalid duration: ${timeArg} – use format 1h 30m 15s or 3500ms`,
+    );
+  }
+
+  console.log(`Collecting feeds every ${timeArg}...`);
+
+  // run the first scrape immediately
+  scrapeFeeds().catch(handleError);
+
+  const interval = setInterval(() => {
+    scrapeFeeds().catch(handleError);
+  }, timeBetweenRequests);
+
+  await new Promise<void>((resolve) => {
+    process.on("SIGINT", () => {
+      console.log("Shutting down feed aggregator...");
+      clearInterval(interval);
+      resolve();
+    });
+  });
+}
+
+async function scrapeFeeds() {
+  const feed = await getNextFeedToFetch();
+  if (!feed) {
+    console.log(`No feeds to fetch.`);
+    return;
+  }
+  console.log(`Found a feed to fetch!`);
+  await scrapeFeed(feed);
+}
+
+async function scrapeFeed(feed: Feed) {
+  const feedData = await fetchFeed(feed.url);
+  await markFeedFetched(feed.id);
+
+  for (const item of feedData.channel.item) {
+    console.log(item.title);
+  }
+
+  console.log(
+    `Feed ${feed.name} collected, ${feedData.channel.item.length} posts found`,
+  );
+}
+
+function handleError(err: unknown) {
+  console.error(
+    `Error scraping feeds: ${err instanceof Error ? err.message : err}`,
+  );
 }
 
 export async function handlerAddFeed(cmdName: string,user: User, ...args: string[]): Promise<void> {
